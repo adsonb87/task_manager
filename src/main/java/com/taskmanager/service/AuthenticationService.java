@@ -1,5 +1,7 @@
 package com.taskmanager.service;
 
+import com.taskmanager.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,12 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService implements UserDetailsService {
 
-    //Realizar a criacao do usuário repository para retornar
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //Retornar o e-mail do usuario que será utilizado como login
-        return null;
+        return usuarioRepository.findByEmail(username);
     }
 
     public BCryptPasswordEncoder getPasswordEncoder(){

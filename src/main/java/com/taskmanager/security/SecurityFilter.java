@@ -1,5 +1,6 @@
 package com.taskmanager.security;
 
+import com.taskmanager.repository.UsuarioRepository;
 import com.taskmanager.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,10 +23,8 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     private TokenService tokenService;
 
-    private String usuarioRepository;
-
     @Autowired
-    private UserDetails usuario;
+    private UsuarioRepository usuarioRepository;
 
     private String _getTokenFromRequest(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization");
@@ -43,8 +42,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         if(Objects.nonNull(token)){
             String subject = tokenService.getSubject(token);
 
-            //Quando criar o repository do usuario implementar
-            //UserDetails usuario = usuarioRepository.findByEmail(subject);
+            UserDetails usuario = usuarioRepository.findByEmail(subject);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(usuario,null, null);
 
