@@ -5,12 +5,16 @@ import com.taskmanager.model.Usuario;
 import com.taskmanager.repository.UsuarioRepository;
 import com.taskmanager.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -45,9 +49,45 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioRepository.save(usuario));
     }
 
+    @GetMapping
+    private ResponseEntity<Object> listarUsuarios(@PageableDefault(size = 10, page = 0, sort = {"nome"}) Pageable pageable){
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioRepository.findAll(pageable));
+    }
 
+    @PutMapping("/{id}")
+    private ResponseEntity<Usuario> editarUsuario(@PathVariable("id") long id, @RequestBody Usuario usuario){
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
 
+        if(usuarioOptional.isPresent()){
+            usuario.setIdUsuario(id);
+            return ResponseEntity.status(HttpStatus.FOUND).body(usuarioRepository.save(usuario));
+        }
 
+        return ResponseEntity.badRequest().build();
+    }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity<Object> deletarUsuario(@PathVariable("id") long id){
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+
+        if(usuarioOptional.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+
+        usuarioRepository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso !!");
+    }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<Object> buscarUsuarioId(@PathVariable("id")long id){
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+
+        if(usuarioOptional.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioOptional);
+    }
 
 
 
