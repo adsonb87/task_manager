@@ -30,7 +30,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if(Objects.nonNull(authHeader)){
-            return authHeader.replace("Bearer", "");
+            return authHeader.replace("Bearer ", "");
         }
         return null;
     }
@@ -44,7 +44,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             UserDetails usuario = usuarioRepository.findByEmail(subject);
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(usuario,null, null);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(usuario,null, usuario.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
