@@ -36,6 +36,11 @@ public class Usuario implements UserDetails {
     @Column(name = "senha", nullable = false)
     private String senha;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "usuario_tarefa",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "tarefa_id"))
+    private List<Tarefa> tarefas;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
