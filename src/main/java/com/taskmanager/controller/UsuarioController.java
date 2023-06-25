@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,6 @@ public class UsuarioController {
 
     @Autowired
     private AuthenticationService authenticationService;
-
-    @Autowired
-    private AutenticacaoController autenticacaoController;
 
     @PostMapping
     private ResponseEntity<Object> salvarUsuario(@RequestBody Usuario usuario){
@@ -90,16 +88,10 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioOptional);
     }
 
-    /*Recuperar dados do usuario logado*/
     @GetMapping("/teste")
-    private ResponseEntity<Object> teste(){
-        Authentication authentication = autenticacaoController.getAuth();
-
-        Usuario usuario = (Usuario) authentication.getPrincipal();
+    private ResponseEntity<Object> teste(@CurrentSecurityContext(expression = "authentication.getPrincipal()") Usuario usuario){
 
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
-
-
 
 }

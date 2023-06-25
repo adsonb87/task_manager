@@ -29,8 +29,9 @@ public class Tarefa {
     @Column(name = "status", nullable = false)
     private StatusTarefa statusTarefa;
 
-    @ManyToMany(mappedBy = "tarefas", fetch = FetchType.EAGER)
-    private Usuario usuario;
+    //@ManyToOne
+    //@JoinColumn(name = "usuario_id")
+    //private Usuario usuario;
 
 
 }
