@@ -36,10 +36,15 @@ public class AutenticacaoController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    private Authentication authentication;
+    public Authentication getAuth(){
+        return  authentication;
+    }
+
     @PostMapping("/login")
     public ResponseEntity<UsuarioDTO> login(@RequestBody AutenticacaoDTO autenticacaoDTO){
         try{
-            Authentication authentication = authenticationManager.authenticate(
+            authentication  = authenticationManager.authenticate(
               new UsernamePasswordAuthenticationToken(
                       autenticacaoDTO.getEmail(),
                       autenticacaoDTO.getSenha()));

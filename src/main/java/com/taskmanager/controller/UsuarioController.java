@@ -6,17 +6,17 @@ import com.taskmanager.repository.UsuarioRepository;
 import com.taskmanager.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -89,6 +89,11 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioOptional);
     }
 
+    /*Recuperar dados do usuario logado*/
+    @GetMapping("/teste")
+    private ResponseEntity<Object> teste(@CurrentSecurityContext(expression = "authentication.getPrincipal()") Usuario usuario){
 
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
+    }
 
 }
