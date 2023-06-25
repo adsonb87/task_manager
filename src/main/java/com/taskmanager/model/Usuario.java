@@ -36,8 +36,6 @@ public class Usuario implements UserDetails {
     @Column(name = "senha", nullable = false)
     private String senha;
 
-    //@OneToMany(mappedBy = "usuario")
-    //private List<Tarefa> tarefas;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

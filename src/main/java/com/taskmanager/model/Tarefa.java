@@ -1,9 +1,11 @@
 package com.taskmanager.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 @Data
@@ -22,16 +24,13 @@ public class Tarefa {
     @Column(name = "descricao", nullable = false)
     private String descricao;
 
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Column(name = "data_criacao", nullable = false)
     private Date dataCriacao;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private StatusTarefa statusTarefa;
-
-    //@ManyToOne
-    //@JoinColumn(name = "usuario_id")
-    //private Usuario usuario;
-
 
 }
