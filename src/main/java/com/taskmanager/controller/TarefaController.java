@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.taskmanager.dto.TarefaDTO;
-import com.taskmanager.dto.UsuarioDTO;
-import com.taskmanager.model.Tarefa;
 import com.taskmanager.model.Usuario;
-import com.taskmanager.repository.TarefaRepository;
 import com.taskmanager.repository.UsuarioRepository;
+import com.taskmanager.service.TarefaService;
 
 import jakarta.validation.Valid;
 
@@ -33,131 +31,74 @@ public class TarefaController {
   @GetMapping
   public ResponseEntity<Page<TarefaDTO>> listarTarefas(
       @PageableDefault(size = 10, page = 0, sort = { "nome" }) Pageable pageable) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String emailUserLogado = authentication.getName();
+    Usuario usuario = getUsuarioLogado();
 
-    Usuario usuario = usuarioRepository.findByEmail(emailUserLogado);
-
-    Page<Tarefa> tarefas = tarefaRepository.findByUsuario(usuario, pageable);
-    Page<TarefaDTO> tarefasDTOs = tarefas.map(this::convertToDTO);
+    Page<TarefaDTO> tarefasDTOs = tarefaService.listarTarefas(usuario, pageable);
 
     return ResponseEntity.status(HttpStatus.OK).body(tarefasDTOs);
   }
 
   @PostMapping
   public ResponseEntity<TarefaDTO> criarTarefa(@Valid @RequestBody TarefaDTO tarefaDTO) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String emailUsuarioLogado = authentication.getName();
+    Usuario usuarioLogado = getUsuarioLogado();
 
-    Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuarioLogado);
-    Tarefa tarefa = convertToEntity(tarefaDTO);
-    tarefa.setUsuario(usuarioLogado);
+    TarefaDTO novaTarefaDTO = tarefaService.criarTarefa(tarefaDTO, usuarioLogado);
 
-    Tarefa novaTarefa = tarefaRepository.save(tarefa);
-    TarefaDTO novaTarefaDTO = convertToDTO(novaTarefa);
+    if (novaTarefaDTO == null) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
 
     return ResponseEntity.status(HttpStatus.CREATED).body(novaTarefaDTO);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<TarefaDTO> editarTarefa(@PathVariable("id") Long id, @Valid @RequestBody TarefaDTO tarefaDTO) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String emailUsuarioLogado = authentication.getName();
+    Usuario usuarioLogado = getUsuarioLogado();
 
-    Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuarioLogado);
+    TarefaDTO tarefaAtualizadaDTO = tarefaService.editarTarefa(id, tarefaDTO, usuarioLogado);
 
-    Tarefa tarefaExistente = tarefaRepository.findById(id).orElse(null);
-
-    if (tarefaExistente == null || !tarefaExistente.getUsuario().equals(usuarioLogado)) {
-      return ResponseEntity.notFound().build();
+    if (tarefaAtualizadaDTO == null) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
-
-    Tarefa tarefa = convertToEntity(tarefaDTO);
-    tarefa.setId(id);
-    tarefa.setUsuario(usuarioLogado);
-
-    Tarefa tarefaAtualizada = tarefaRepository.save(tarefa);
-    TarefaDTO tarefaAtualizadaDTO = convertToDTO(tarefaAtualizada);
 
     return ResponseEntity.status(HttpStatus.OK).body(tarefaAtualizadaDTO);
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<TarefaDTO> listarTarefaPorId(@PathVariable("id") Long id) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String emailUsuarioLogado = authentication.getName();
+    Usuario usuarioLogado = getUsuarioLogado();
 
-    Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuarioLogado);
+    TarefaDTO tarefaDTO = tarefaService.listarTarefaPorId(id, usuarioLogado);
 
-    Tarefa tarefa = tarefaRepository.findById(id).orElse(null);
-
-    if (tarefa == null || !tarefa.getUsuario().equals(usuarioLogado)) {
-      return ResponseEntity.notFound().build();
+    if (tarefaDTO == null) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    TarefaDTO tarefaDTO = convertToDTO(tarefa);
     return ResponseEntity.status(HttpStatus.OK).body(tarefaDTO);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deletarTarefa(@PathVariable("id") Long id) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String emailUsuarioLogado = authentication.getName();
+    Usuario usuarioLogado = getUsuarioLogado();
 
-    Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuarioLogado);
+    tarefaService.deletarTarefa(id, usuarioLogado);
 
-    Tarefa tarefa = tarefaRepository.findById(id).orElse(null);
-
-    if (tarefa == null || !tarefa.getUsuario().equals(usuarioLogado)) {
-      return ResponseEntity.notFound().build();
-    }
-
-    tarefaRepository.delete(tarefa);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
-  @Autowired
-  private UsuarioRepository usuarioRepository;
-
-  @Autowired
-  private TarefaRepository tarefaRepository;
-
-  private TarefaDTO convertToDTO(Tarefa tarefa) {
-    UsuarioDTO usuarioDTO = new UsuarioDTO(
-        tarefa.getUsuario().getNome(),
-        tarefa.getUsuario().getSobrenome(),
-        tarefa.getUsuario().getEmail(),
-        null // O token pode ser definido de acordo com a necessidade
-    );
-
-    return new TarefaDTO(
-        tarefa.getId(),
-        tarefa.getNome(),
-        tarefa.getDescricao(),
-        tarefa.getPrioridade(),
-        tarefa.getStatus(),
-        tarefa.getDataInicio(),
-        tarefa.getDataFinal(),
-        usuarioDTO);
+  private Usuario getUsuarioLogado() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String emailUsuarioLogado = authentication.getName();
+    return usuarioRepository.findByEmail(emailUsuarioLogado);
   }
 
-  private Tarefa convertToEntity(TarefaDTO tarefaDTO) {
-    Tarefa tarefa = new Tarefa();
-    tarefa.setId(tarefaDTO.getId());
-    tarefa.setNome(tarefaDTO.getNome());
-    tarefa.setDescricao(tarefaDTO.getDescricao());
-    tarefa.setPrioridade(tarefaDTO.getPrioridade());
-    tarefa.setStatus(tarefaDTO.getStatus());
-    tarefa.setDataInicio(tarefaDTO.getDataInicio());
-    tarefa.setDataFinal(tarefaDTO.getDataFinal());
+  private final TarefaService tarefaService;
+  private final UsuarioRepository usuarioRepository;
 
-    Usuario usuario = new Usuario();
-    usuario.setNome(tarefaDTO.getUsuario().getNome());
-    usuario.setSobrenome(tarefaDTO.getUsuario().getSobrenome());
-    usuario.setEmail(tarefaDTO.getUsuario().getEmail());
-    tarefa.setUsuario(usuario);
+  @Autowired
+  public TarefaController(TarefaService tarefaService, UsuarioRepository usuarioRepository) {
+    this.tarefaService = tarefaService;
+    this.usuarioRepository = usuarioRepository;
 
-    return tarefa;
   }
-
 }
