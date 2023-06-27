@@ -3,6 +3,7 @@ package com.taskmanager.controller;
 import com.taskmanager.model.Usuario;
 import com.taskmanager.repository.UsuarioRepository;
 import com.taskmanager.service.AuthenticationService;
+import com.taskmanager.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -22,71 +23,57 @@ import java.util.Optional;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private AuthenticationService authenticationService;
+    private UsuarioService usuarioService;
 
     @PostMapping
     private ResponseEntity<Object> salvarUsuario(@RequestBody Usuario usuario) {
 
-        UserDetails usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
+        Usuario usuarioSalvo = usuarioService.salvarUsuario(usuario);
 
-        if (Objects.nonNull(usuarioBD)) {
+        if (Objects.isNull(usuarioSalvo)) {
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
                     .body("Já existe usuário cadastrado com este e-mail");
         }
 
-        String senha = usuario.getSenha();
-
-        BCryptPasswordEncoder encoder = authenticationService.getPasswordEncoder();
-
-        usuario.setSenha(encoder.encode(senha));
-
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioRepository.save(usuario));
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
     @GetMapping
     private ResponseEntity<Object> listarUsuarios(@PageableDefault(size = 10, page = 0, sort = {"nome"}) Pageable pageable){
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioRepository.findAll(pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.listarUsuario(pageable));
     }
 
     @PutMapping("/{id}")
     private ResponseEntity<Usuario> editarUsuario(@PathVariable("id") long id, @RequestBody Usuario usuario){
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+        Usuario usuarioEdit = usuarioService.editarUsuario(id, usuario);
 
-        if(usuarioOptional.isPresent()){
-            usuario.setIdUsuario(id);
-            String senha = usuario.getSenha();
-            BCryptPasswordEncoder encoder = authenticationService.getPasswordEncoder();
-            usuario.setSenha(encoder.encode(senha));
-            return ResponseEntity.status(HttpStatus.FOUND).body(usuarioRepository.save(usuario));
+        if(Objects.isNull(usuarioEdit)){
+            return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.FOUND).body(usuarioEdit);
     }
 
     @DeleteMapping("/{id}")
     private ResponseEntity<Object> deletarUsuario(@PathVariable("id") long id) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+        Boolean usuarioDeletado = usuarioService.deletarUsuario(id);
 
-        if(usuarioOptional.isEmpty()){
+        if(usuarioDeletado == false){
             return ResponseEntity.badRequest().build();
         }
 
-        usuarioRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso !!");
     }
 
     @GetMapping("/{id}")
     private ResponseEntity<Object> buscarUsuarioId(@PathVariable("id")long id){
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+        Usuario usuario = usuarioService.buscarUsuarioId(id);
 
-        if(usuarioOptional.isEmpty()){
+        if(usuario == null){
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioOptional);
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
     /*Recuperar dados do usuario logado*/
