@@ -11,6 +11,6 @@ VALUES
         1,
         "Teste",
         "Teste",
-        "teste@ekos.com.br",
-        "$2a$12$fbOS.d7OBQ5oM8SteE5V5.yvq7sbYdxHYT4YiNLRgBFwb3lqigX72"
+        "teste@task-manager.com.br",
+        "$2a$10$d0.ajLVR6wyXTZEJurGtyO6wGwwL8RCFKRsFADv765E7xOFUC8S1W"
     );
