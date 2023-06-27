@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.taskmanager.dto.TarefaDTO;
+import com.taskmanager.dto.UsuarioDTO;
 import com.taskmanager.model.Tarefa;
 import com.taskmanager.model.Usuario;
 import com.taskmanager.repository.TarefaRepository;
@@ -26,7 +28,7 @@ import jakarta.validation.Valid;
 public class TarefaController {
 
   @GetMapping
-  public ResponseEntity<Page<Tarefa>> listarTarefas(
+  public ResponseEntity<Page<TarefaDTO>> listarTarefas(
       @PageableDefault(size = 10, page = 0, sort = { "nome" }) Pageable pageable) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String emailUserLogado = authentication.getName();
@@ -34,21 +36,24 @@ public class TarefaController {
     Usuario usuario = usuarioRepository.findByEmail(emailUserLogado);
 
     Page<Tarefa> tarefas = tarefaRepository.findByUsuario(usuario, pageable);
+    Page<TarefaDTO> tarefasDTOs = tarefas.map(this::convertToDTO);
 
-    return ResponseEntity.status(HttpStatus.OK).body(tarefas);
+    return ResponseEntity.status(HttpStatus.OK).body(tarefasDTOs);
   }
 
   @PostMapping
-  public ResponseEntity<Tarefa> criarTarefa(@Valid @RequestBody Tarefa tarefa) {
+  public ResponseEntity<TarefaDTO> criarTarefa(@Valid @RequestBody TarefaDTO tarefaDTO) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String emailUsuarioLogado = authentication.getName();
 
     Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuarioLogado);
+    Tarefa tarefa = convertToEntity(tarefaDTO);
     tarefa.setUsuario(usuarioLogado);
 
     Tarefa novaTarefa = tarefaRepository.save(tarefa);
+    TarefaDTO novaTarefaDTO = convertToDTO(novaTarefa);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(novaTarefa);
+    return ResponseEntity.status(HttpStatus.CREATED).body(novaTarefaDTO);
   }
 
   @Autowired
@@ -56,4 +61,43 @@ public class TarefaController {
 
   @Autowired
   private TarefaRepository tarefaRepository;
+
+  private TarefaDTO convertToDTO(Tarefa tarefa) {
+    UsuarioDTO usuarioDTO = new UsuarioDTO(
+        tarefa.getUsuario().getNome(),
+        tarefa.getUsuario().getSobrenome(),
+        tarefa.getUsuario().getEmail(),
+        null // O token pode ser definido de acordo com a necessidade
+    );
+
+    return new TarefaDTO(
+        tarefa.getId(),
+        tarefa.getNome(),
+        tarefa.getDescricao(),
+        tarefa.getPrioridade(),
+        tarefa.getStatus(),
+        tarefa.getDataInicio(),
+        tarefa.getDataFinal(),
+        usuarioDTO);
+  }
+
+  private Tarefa convertToEntity(TarefaDTO tarefaDTO) {
+    Tarefa tarefa = new Tarefa();
+    tarefa.setId(tarefaDTO.getId());
+    tarefa.setNome(tarefaDTO.getNome());
+    tarefa.setDescricao(tarefaDTO.getDescricao());
+    tarefa.setPrioridade(tarefaDTO.getPrioridade());
+    tarefa.setStatus(tarefaDTO.getStatus());
+    tarefa.setDataInicio(tarefaDTO.getDataInicio());
+    tarefa.setDataFinal(tarefaDTO.getDataFinal());
+
+    Usuario usuario = new Usuario();
+    usuario.setNome(tarefaDTO.getUsuario().getNome());
+    usuario.setSobrenome(tarefaDTO.getUsuario().getSobrenome());
+    usuario.setEmail(tarefaDTO.getUsuario().getEmail());
+    tarefa.setUsuario(usuario);
+
+    return tarefa;
+  }
+
 }
