@@ -8,8 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +57,63 @@ public class TarefaController {
     TarefaDTO novaTarefaDTO = convertToDTO(novaTarefa);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(novaTarefaDTO);
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<TarefaDTO> editarTarefa(@PathVariable("id") Long id, @Valid @RequestBody TarefaDTO tarefaDTO) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String emailUsuarioLogado = authentication.getName();
+
+    Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuarioLogado);
+
+    Tarefa tarefaExistente = tarefaRepository.findById(id).orElse(null);
+
+    if (tarefaExistente == null || !tarefaExistente.getUsuario().equals(usuarioLogado)) {
+      return ResponseEntity.notFound().build();
+    }
+
+    Tarefa tarefa = convertToEntity(tarefaDTO);
+    tarefa.setId(id);
+    tarefa.setUsuario(usuarioLogado);
+
+    Tarefa tarefaAtualizada = tarefaRepository.save(tarefa);
+    TarefaDTO tarefaAtualizadaDTO = convertToDTO(tarefaAtualizada);
+
+    return ResponseEntity.status(HttpStatus.OK).body(tarefaAtualizadaDTO);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<TarefaDTO> listarTarefaPorId(@PathVariable("id") Long id) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String emailUsuarioLogado = authentication.getName();
+
+    Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuarioLogado);
+
+    Tarefa tarefa = tarefaRepository.findById(id).orElse(null);
+
+    if (tarefa == null || !tarefa.getUsuario().equals(usuarioLogado)) {
+      return ResponseEntity.notFound().build();
+    }
+
+    TarefaDTO tarefaDTO = convertToDTO(tarefa);
+    return ResponseEntity.status(HttpStatus.OK).body(tarefaDTO);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deletarTarefa(@PathVariable("id") Long id) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String emailUsuarioLogado = authentication.getName();
+
+    Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuarioLogado);
+
+    Tarefa tarefa = tarefaRepository.findById(id).orElse(null);
+
+    if (tarefa == null || !tarefa.getUsuario().equals(usuarioLogado)) {
+      return ResponseEntity.notFound().build();
+    }
+
+    tarefaRepository.delete(tarefa);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   @Autowired
