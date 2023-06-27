@@ -77,7 +77,7 @@ public class UsuarioController {
         usuarioRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso !!");
     }
-    
+
     @GetMapping("/{id}")
     private ResponseEntity<Object> buscarUsuarioId(@PathVariable("id")long id){
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
