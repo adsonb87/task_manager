@@ -237,41 +237,6 @@
 					"response": []
 				},
 				{
-					"name": "Listar Usuários",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0YXNrLW1hbmFnZXIiLCJzdWIiOiJhZHNvbkBnbWFpbC5jb20iLCJleHAiOjE2OTAyMDg5NTcsImlkIjoyfQ.lJe8sqtk6t-MSJ4BvZX_8_lTcFIwQ5aUj0usxnT37Ks",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/usuarios",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"usuarios"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Tarefas",
-			"item": [
-				{
 					"name": "teste",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -315,6 +280,41 @@
 					"response": []
 				},
 				{
+					"name": "Listar Usuários",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0YXNrLW1hbmFnZXIiLCJzdWIiOiJhZHNvbkBnbWFpbC5jb20iLCJleHAiOjE2OTAyMDg5NTcsImlkIjoyfQ.lJe8sqtk6t-MSJ4BvZX_8_lTcFIwQ5aUj0usxnT37Ks",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tarefas",
+			"item": [
+				{
 					"name": "Salvar Tarefa",
 					"request": {
 						"auth": {
@@ -331,7 +331,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"titulo\":\"Teste\",\n    \"descricao\":\"Teste\",\n    \"dataCriacao\":\"2023-06-25\",\n    \"statusTarefa\":\"naoConcluido\"\n}",
+							"raw": "{\n  \"nome\": \"A Tarefa de exemplo\",\n  \"descricao\": \"Descrição da tarefa de exemplo\",\n  \"prioridade\": \"NORMAL\",\n  \"status\": \"EM_ANDAMENTO\",\n  \"dataInicio\": \"2023-06-26\",\n  \"dataFinal\": \"2023-07-03\",\n    \"usuario\": {\n        \"idUsuario\": 3\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -370,7 +370,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"titulo\":\"Teste\",\n    \"descricao\":\"Teste\",\n    \"dataCriacao\":\"2023-06-25\",\n    \"statusTarefa\":\"naoConcluido\"\n}",
+							"raw": "{\n  \"nome\": \"Tarefa de Exemplo editada\",\n  \"descricao\": \"Descrição da tarefa de exemplo\",\n  \"prioridade\": 1,\n  \"status\": \"EM_ANDAMENTO\",\n  \"dataInicio\": \"2023-06-26\",\n  \"dataFinal\": \"2023-07-03\",\n  \"usuario\": {\n    \"idUsuario\": 1\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -378,7 +378,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/tarefas/2",
+							"raw": "http://localhost:8080/api/tarefas/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -387,48 +387,7 @@
 							"path": [
 								"api",
 								"tarefas",
-								"2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Editar Status Tarefa",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0YXNrLW1hbmFnZXIiLCJzdWIiOiJhZHNvbkBnbWFpbC5jb20iLCJleHAiOjE2OTAzMTM1NjksImlkIjoyfQ.0dpQfGL9rjm_NU11JQ50FP6PRzxxdt05Qu-lNhZamS8",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"statusTarefa\":\"concluido\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8080/api/tarefas/status/4",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"tarefas",
-								"status",
-								"4"
+								"1"
 							]
 						}
 					},
