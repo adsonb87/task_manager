@@ -1,7 +1,7 @@
 package com.taskmanager.helpers;
 
 public enum StatusTarefa {
-  NA0_INICIADA,
+  NAO_INICIADA,
   EM_ANDAMENTO,
   CONCLUIDA,
   SUSPENSA

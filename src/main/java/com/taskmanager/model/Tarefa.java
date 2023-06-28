@@ -48,15 +48,15 @@ public class Tarefa {
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @Column(name = "data_inicio", nullable = false)
+    @Column(name = "dataInicio", nullable = false)
     private LocalDate dataInicio;
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @Column(name = "data_final", nullable = false)
+    @Column(name = "dataFinal", nullable = false)
     private LocalDate dataFinal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuarioId", nullable = false)
     private Usuario usuario;
 }

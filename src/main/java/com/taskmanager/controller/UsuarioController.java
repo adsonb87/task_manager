@@ -1,8 +1,6 @@
 package com.taskmanager.controller;
 
 import com.taskmanager.model.Usuario;
-import com.taskmanager.repository.UsuarioRepository;
-import com.taskmanager.service.AuthenticationService;
 import com.taskmanager.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -10,13 +8,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.security.core.annotation.CurrentSecurityContext;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/usuarios", produces = "application/json")
@@ -72,13 +66,6 @@ public class UsuarioController {
         if(usuario == null){
             return ResponseEntity.badRequest().build();
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body(usuario);
-    }
-
-    /*Recuperar dados do usuario logado*/
-    @GetMapping("/teste")
-    private ResponseEntity<Object> teste(@CurrentSecurityContext(expression = "authentication.getPrincipal()") Usuario usuario){
 
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
