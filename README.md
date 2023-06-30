@@ -121,13 +121,13 @@ Content-Type: application/json
 
 Rota padrão `<http://localhost:8080/api/usuarios>`
 
-| Método   | Funcionalidade                          | URL                         |
-|----------| --------------------------------------- | --------------------------- |
+| Método   | Funcionalidade                            | URL                         |
+|----------|-------------------------------------------| --------------------------- |
 | `POST`   | Realiza o cadastro do usuário na aplicação | <http://localhost:8080/api/usuarios> |
-| `GET`    | Lista todos os usuários cadastrados | <http://localhost:8080/api/usuarios> |
-| `PUT`    | Edita o usuário encontrado pelo id | <http://localhost:8080/api/usuarios/{id}> |
-| `DELETE` | Deleta o usuário encontrado pelo id | <http://localhost:8080/api/usuarios/{id}> |
-| `GET`    | Lista o usuário encontrado pelo id | <http://localhost:8080/api/usuarios/{id}> |
+| `GET`    | Lista todos os usuários cadastrados       | <http://localhost:8080/api/usuarios> |
+| `PUT`    | Edita o usuário encontrado pelo id        | <http://localhost:8080/api/usuarios/{id}> |
+| `DELETE` | Deleta o usuário encontrado pelo id       | <http://localhost:8080/api/usuarios/{id}> |
+| `GET`    | Busca o usuário pelo id         | <http://localhost:8080/api/usuarios/{id}> |
 
 <details>
   <summary>Cadastro</summary>
@@ -251,7 +251,7 @@ Content-Type: application/json
 
 - __URL:__ `/api/usuarios/{id}`
 - __Método:__ `DELETE`
-- __Path Variable__
+- __Path Variable ID__
 
 Resposta:
 
@@ -262,11 +262,11 @@ Usuário deletado com sucesso !!
 </details>
 
 <details>
-    <summary>Lista Usuário pelo ID</summary>
+    <summary>Busca Usuário pelo ID</summary>
 
 - __URL:__ `/api/usuarios/{id}`
 - __Método:__ `GET`
-- - __Path Variable__
+- __Path Variable ID__
 
 Resposta:
 
@@ -293,4 +293,48 @@ Content-Type: application/json
     ]
 }
 ```
+</details>
+
+## Tarefas
+
+Rota padrão `<http://localhost:8080/api/tarefas>`
+
+| Método   | Funcionalidade                        | URL                                       |
+|----------|---------------------------------------|-------------------------------------------|
+| `POST`   | Cria a tarefa na aplicação            | <http://localhost:8080/api/tarefas>       |
+| `GET`    | Lista as tarefas criadas pelo usuário | <http://localhost:8080/api/tarefas>      |
+| `PUT`    | Edita a tarefa encontrada pelo id     | <http://localhost:8080/api/tarefas/{id}> |
+| `DELETE` | Deleta a tarefa encontrada pelo id    | <http://localhost:8080/api/tarefas/{id}> |
+| `GET`    | Busca a tarefa pelo id     | <http://localhost:8080/api/tarefas/{id}> |
+
+<details>
+    <summary>Cadastro</summary>
+
+- __URL:__ `/api/tarefas`
+- __Método:__ `PUT`
+- - __Path Variable__
+
+```json
+  {
+    "nome": "Isaac",
+    "sobrenome": "Almeida",
+    "email": "isaac@gmail.com",
+    "senha": "teste"
+  }
+```
+
+Resposta:
+
+```http
+HTTP/1.1 201 CREATED
+Content-Type: application/json
+
+{
+ "nome": "Isaac",
+ "sobrenome": "Almeida",
+ "email": "isaac@gmail.com",
+ "token": null
+}
+```
+
 </details>
