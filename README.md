@@ -311,16 +311,21 @@ Rota padrão `<http://localhost:8080/api/tarefas>`
     <summary>Cadastro</summary>
 
 - __URL:__ `/api/tarefas`
-- __Método:__ `PUT`
-- - __Path Variable__
+- __Método:__ `POST`
+- __Corpo da Requisição:__
 
 ```json
-  {
-    "nome": "Isaac",
-    "sobrenome": "Almeida",
-    "email": "isaac@gmail.com",
-    "senha": "teste"
-  }
+    {
+      "nome": "A Tarefa de exemplo",
+      "descricao": "Descrição da tarefa de exemplo",
+      "prioridade": "NORMAL",
+      "status": "EM_ANDAMENTO",
+      "dataInicio": "2023-06-26",
+      "dataFinal": "2023-07-03",
+      "usuario": {
+        "idUsuario": 2
+      }
+    }
 ```
 
 Resposta:
@@ -329,12 +334,173 @@ Resposta:
 HTTP/1.1 201 CREATED
 Content-Type: application/json
 
-{
- "nome": "Isaac",
- "sobrenome": "Almeida",
- "email": "isaac@gmail.com",
- "token": null
-}
+    {
+        "id": 1,
+        "nome": "A Tarefa de exemplo",
+        "descricao": "Descrição da tarefa de exemplo",
+        "prioridade": "NORMAL",
+        "status": "EM_ANDAMENTO",
+        "dataInicio": "2023-06-26",
+        "dataFinal": "2023-07-03",
+        "usuario": {
+            "nome": "Adson",
+            "sobrenome": "Souza",
+            "email": "adson@gmail.com",
+            "token": null
+        }
+    }
 ```
 
 </details>
+
+<details>
+    <summary>Listar Tarefas</summary>
+
+- __URL:__ `/api/tarefas`
+- __Método:__ `GET`
+
+Parâmetros da paginação
+
+- page (opcional): Número da página (padrão: 0).
+- size (opcional): Quantidade de registros por página (padrão: 10).
+- sort (opcional): Ordenação dos registros (padrão: "nome").
+
+```json
+     {
+      "id": 1,
+      "nome": "A Tarefa de exemplo",
+      "descricao": "Descrição da tarefa de exemplo",
+      "prioridade": "NORMAL",
+      "status": "EM_ANDAMENTO",
+      "dataInicio": "2023-06-26",
+      "dataFinal": "2023-07-03",
+      "usuario": {
+        "nome": "Adson",
+        "sobrenome": "Souza",
+        "email": "adson@gmail.com",
+        "token": null
+      }
+    }
+```
+
+Resposta:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+    [
+        {
+            "id": 1,
+            "nome": "A Tarefa de exemplo",
+            "descricao": "Descrição da tarefa de exemplo",
+            "prioridade": "NORMAL",
+            "status": "EM_ANDAMENTO",
+            "dataInicio": "2023-06-26",
+            "dataFinal": "2023-07-03",
+            "usuario": {
+                "nome": "Adson",
+                "sobrenome": "Souza",
+                "email": "adson@gmail.com",
+                "token": null
+            }
+        },
+        ...
+    ]
+```
+
+</details>
+
+<details>
+    <summary>Edita Tarefa ID</summary>
+
+- __URL:__ `/api/tarefas/{id}`
+- __Método:__ `PUT`
+- __Corpo da Requisição:__
+
+```json
+  {
+      "nome": "Tarefa de Exemplo editada",
+      "descricao": "Descrição da tarefa de exemplo",
+      "prioridade": 1,
+      "status": "EM_ANDAMENTO",
+      "dataInicio": "2023-06-26",
+      "dataFinal": "2023-07-03",
+      "usuario": {
+        "idUsuario": 1
+      }
+  }
+```
+
+Resposta:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+  {
+    "id": 1,
+    "nome": "Tarefa de Exemplo editada",
+    "descricao": "Descrição da tarefa de exemplo",
+    "prioridade": "NORMAL",
+    "status": "EM_ANDAMENTO",
+    "dataInicio": "2023-06-26",
+    "dataFinal": "2023-07-03",
+    "usuario": {
+        "nome": "Adson",
+        "sobrenome": "Souza",
+        "email": "adson@gmail.com",
+        "token": null
+    }
+  }
+```
+</details>
+
+<details>
+    <summary>Busca Tarefa ID</summary>
+
+- __URL:__ `/api/tarefas/{id}`
+- __Método:__ `GET`
+- __Path Variable ID__
+
+Resposta:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+  {
+    "id": 1,
+    "nome": "Tarefa de Exemplo editada",
+    "descricao": "Descrição da tarefa de exemplo",
+    "prioridade": "NORMAL",
+    "status": "EM_ANDAMENTO",
+    "dataInicio": "2023-06-26",
+    "dataFinal": "2023-07-03",
+    "usuario": {
+        "nome": "Adson",
+        "sobrenome": "Souza",
+        "email": "adson@gmail.com",
+        "token": null
+    }
+  }
+```
+
+</details>
+
+<details>
+    <summary>Deleta Tarefa ID</summary>
+
+- __URL:__ `/api/tarefas/{id}`
+- __Método:__ `DELETE`
+- __Path Variable ID__
+
+Resposta:
+
+```http
+HTTP/1.1 204 NO CONTENT
+
+```
+
+</details>
+
