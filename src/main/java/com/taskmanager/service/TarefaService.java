@@ -1,5 +1,7 @@
 package com.taskmanager.service;
 
+import com.taskmanager.dto.TarefaSaveDTO;
+import com.taskmanager.mapper.TarefaSaveMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,6 +63,14 @@ public class TarefaService {
     if (tarefa != null && tarefa.getUsuario().equals(usuarioLogado)) {
       tarefaRepository.delete(tarefa);
     }
+  }
+
+  public TarefaDTO criarTarefa2(TarefaSaveDTO tarefaSaveDTO, Usuario usuarioLogado) {
+
+    Tarefa tarefa = TarefaSaveMapper.toEntity(tarefaSaveDTO, usuarioLogado);
+
+    Tarefa novaTarefa = tarefaRepository.save(tarefa);
+    return TarefaMapper.toDTO(novaTarefa);
   }
 
   private final TarefaRepository tarefaRepository;

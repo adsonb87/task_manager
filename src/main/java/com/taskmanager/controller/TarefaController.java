@@ -1,5 +1,6 @@
 package com.taskmanager.controller;
 
+import com.taskmanager.dto.TarefaSaveDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,10 +40,10 @@ public class TarefaController {
   }
 
   @PostMapping
-  public ResponseEntity<TarefaDTO> criarTarefa(@Valid @RequestBody TarefaDTO tarefaDTO) {
+  public ResponseEntity<TarefaDTO> criarTarefa(@Valid @RequestBody TarefaSaveDTO tarefaSaveDTO) {
     Usuario usuarioLogado = getUsuarioLogado();
 
-    TarefaDTO novaTarefaDTO = tarefaService.criarTarefa(tarefaDTO, usuarioLogado);
+    TarefaDTO novaTarefaDTO = tarefaService.criarTarefa2(tarefaSaveDTO, usuarioLogado);
 
     if (novaTarefaDTO == null) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
