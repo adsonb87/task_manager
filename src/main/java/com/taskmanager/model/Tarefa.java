@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,5 +34,9 @@ public class Tarefa {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private StatusTarefa statusTarefa;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Usuario usuario;
+
 
 }
