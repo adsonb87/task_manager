@@ -20,14 +20,6 @@ public class TarefaService {
     return tarefas.map(TarefaMapper::toDTO);
   }
 
-  public TarefaDTO criarTarefa(TarefaDTO tarefaDTO, Usuario usuarioLogado) {
-    Tarefa tarefa = TarefaMapper.toEntity(tarefaDTO);
-    tarefa.setUsuario(usuarioLogado);
-
-    Tarefa novaTarefa = tarefaRepository.save(tarefa);
-    return TarefaMapper.toDTO(novaTarefa);
-  }
-
   public TarefaDTO editarTarefa(Long id, TarefaDTO tarefaDTO, Usuario usuarioLogado) {
     Tarefa tarefaExistente = tarefaRepository.findById(id).orElse(null);
 
@@ -65,7 +57,7 @@ public class TarefaService {
     }
   }
 
-  public TarefaDTO criarTarefa2(TarefaSaveDTO tarefaSaveDTO, Usuario usuarioLogado) {
+  public TarefaDTO criarTarefa(TarefaSaveDTO tarefaSaveDTO, Usuario usuarioLogado) {
 
     Tarefa tarefa = TarefaSaveMapper.toEntity(tarefaSaveDTO, usuarioLogado);
 

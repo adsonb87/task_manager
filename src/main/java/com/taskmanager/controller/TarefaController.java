@@ -43,7 +43,7 @@ public class TarefaController {
   public ResponseEntity<TarefaDTO> criarTarefa(@Valid @RequestBody TarefaSaveDTO tarefaSaveDTO) {
     Usuario usuarioLogado = getUsuarioLogado();
 
-    TarefaDTO novaTarefaDTO = tarefaService.criarTarefa2(tarefaSaveDTO, usuarioLogado);
+    TarefaDTO novaTarefaDTO = tarefaService.criarTarefa(tarefaSaveDTO, usuarioLogado);
 
     if (novaTarefaDTO == null) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
